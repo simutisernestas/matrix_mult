@@ -129,7 +129,7 @@ void dynamicProduct()
     m3.C = m2.C;
     m3.index = new int[m3.C * m3.R];
     int sum{};
-    for (size_t i = 0; i < m3.R * m3.C; i++)
+    for (size_t i = 2; i < m3.R * m3.C; i++)
     {
         sum = 0;
         for (size_t j = 0; j < m1.C; j++)
@@ -137,20 +137,24 @@ void dynamicProduct()
             // arr[i*sizeY+j] == arr[i][j]
             // cout << m3.R * m3.C << endl;
             // cout << (i / m3.C) * m3.R + (j % m1.C) << " " << j * m3.R + (i % m3.C) << endl;
-            sum += m1.index[i * m1.C + j] * m2.index[j * m1.C + j];
+            // sum += m1.index[i * m1.C + j] * m2.index[j * m1.C + j];
+            sum += m1.index[(i % m1.R) * m1.C + j] * m2.index[j * m2.C + (i % m2.C)];
+            // cout << m1.index[i * m1.C + j] << " " << m2.index[j * m2.C + i] << endl;
+            // cout << (i % m1.R) * m1.C + j << " " << j * m2.C + (i % m2.C) << endl;
+            cout << m1.index[i] << endl;
         }
         // m3.index[i / m3.C][i % m3.C]
         // cout << (i / m3.C) * m3.R + (i % m3.C) << endl;
         // m3.index[(i / m3.C) * m3.R + (i % m3.C)] = sum;
         m3.index[i] = sum;
-        cout << sum << endl;
+        // cout << sum << endl;
+        return;
     }
 
     // for (size_t i = 0; i < 10; i++)
     // {
     //     cout << i;
     // }
-    
 
     input.close();
 }
