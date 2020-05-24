@@ -5,7 +5,8 @@
 #include <iostream>
 #include <chrono>
 #include <string>
-using namespace std;
+
+using std::cout, std::endl, std::ios, std::fstream;
 using namespace std::chrono;
 
 struct Timer
@@ -40,11 +41,12 @@ typedef struct Matrix_d
 {
     size_t R, C;
     // Indexing - arr[i*sizeY+j] == arr[i][j]
-    int *index;
-    // ~Matrix_d()
-    // {
-    //     delete index;
-    // }
+    int* index;
+
+    ~Matrix_d()
+    {
+        delete index;
+    }
 } MatrixD;
 
 void staticProduct()
@@ -65,8 +67,7 @@ void staticProduct()
     for (size_t i = 0; i < m2.R * m2.C; i++)
         input >> m2.index[i / m2.C][i % m2.C];
 
-    if (m1.C != m2.R)
-    {
+    if (m1.C != m2.R) {
         cout << "Error: matrices cannot be multiplied!" << endl;
         return;
     }
@@ -76,19 +77,16 @@ void staticProduct()
     m3.R = m1.R;
     m3.C = m2.C;
     int sum{};
-    for (size_t i = 0; i < m3.R * m3.C; i++)
-    {
+    for (size_t i = 0; i < m3.R * m3.C; i++) {
         sum = 0;
-        for (size_t j = 0; j < m1.C; j++)
-        {
+        for (size_t j = 0; j < m1.C; j++) {
             sum += m1.index[i / m3.C][j % m1.C] * m2.index[j][i % m3.C];
         }
         m3.index[i / m3.C][i % m3.C] = sum;
     }
 
     // Print matrix
-    for (size_t i = 1; i <= m3.R * m3.C; i++)
-    {
+    for (size_t i = 1; i <= m3.R * m3.C; i++) {
         cout << m3.index[(i - 1) / m3.C][(i - 1) % m3.C] << '\t';
         if (i % 5 == 0)
             cout << endl;
@@ -99,7 +97,7 @@ void staticProduct()
 
 void dynamicProduct()
 {
-    fstream input("matrix.2.in", ios::in);
+    fstream input("../matrix.2.in", ios::in);
 
     // Read matrix
     MatrixD m1;
@@ -117,8 +115,9 @@ void dynamicProduct()
     for (size_t i = 0; i < m2.R * m2.C; i++)
         input >> m2.index[i];
 
-    if (m1.C != m2.R)
-    {
+    input.close();
+
+    if (m1.C != m2.R) {
         cout << "Error: matrices cannot be multiplied!" << endl;
         return;
     }
@@ -129,40 +128,31 @@ void dynamicProduct()
     m3.C = m2.C;
     m3.index = new int[m3.C * m3.R];
     int sum{};
-    for (size_t i = 2; i < m3.R * m3.C; i++)
-    {
-        sum = 0;
-        for (size_t j = 0; j < m1.C; j++)
-        {
-            // arr[i*sizeY+j] == arr[i][j]
-            // cout << m3.R * m3.C << endl;
-            // cout << (i / m3.C) * m3.R + (j % m1.C) << " " << j * m3.R + (i % m3.C) << endl;
-            // sum += m1.index[i * m1.C + j] * m2.index[j * m1.C + j];
-            sum += m1.index[(i % m1.R) * m1.C + j] * m2.index[j * m2.C + (i % m2.C)];
-            // cout << m1.index[i * m1.C + j] << " " << m2.index[j * m2.C + i] << endl;
-            // cout << (i % m1.R) * m1.C + j << " " << j * m2.C + (i % m2.C) << endl;
-            cout << m1.index[i] << endl;
+    for (size_t r = 0; r < m3.R; ++r) {
+        int ri2 = m2.C * r;
+        int ri1 = m1.C * r;
+        for (size_t c = 0; c < m3.C; ++c) {
+            sum = 0;
+            for (size_t j = 0; j < m1.C; j++) {
+                sum += m1.index[ri1 + j] * m2.index[m2.C * j + c];
+            }
+            m3.index[ri2 + c] = sum;
         }
-        // m3.index[i / m3.C][i % m3.C]
-        // cout << (i / m3.C) * m3.R + (i % m3.C) << endl;
-        // m3.index[(i / m3.C) * m3.R + (i % m3.C)] = sum;
-        m3.index[i] = sum;
-        // cout << sum << endl;
-        return;
     }
 
-    // for (size_t i = 0; i < 10; i++)
-    // {
-    //     cout << i;
-    // }
-
-    input.close();
+    // Print result
+    for (int k = 0; k < m3.R * m3.C; ++k) {
+        cout << m3.index[k] << " ";
+        if ((k + 1) % m2.C == 0) cout << endl;
+    }
 }
 
 int main()
 {
     // Time the program
     Timer t{};
+
+    // TODO: read matrix transpose and change product
 
     // staticProduct();
     dynamicProduct();
