@@ -1,3 +1,0 @@
-/home/ernestas/Desktop/matrix/build/CMakeFiles/rebuild_cache.dir
-/home/ernestas/Desktop/matrix/build/CMakeFiles/matrix.dir
-/home/ernestas/Desktop/matrix/build/CMakeFiles/edit_cache.dir
